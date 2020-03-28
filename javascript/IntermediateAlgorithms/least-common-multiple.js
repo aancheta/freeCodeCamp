@@ -14,7 +14,7 @@ function getPrimes(num) {
         return null;
     }
 
-    List all integers from 2 up to num
+    //List all integers from 2 up to num
     let list = [2];
     for (let i = 2; i < num; i++) {
         list.push(i + 1);

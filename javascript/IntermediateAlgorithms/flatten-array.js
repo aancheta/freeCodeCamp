@@ -1,3 +1,5 @@
+//Flatten a nested array. You must account for varying levels of nesting.
+
 function steamrollArray(arr) {
 
     if (arr.some(x => Array.isArray(x)) === false) { return arr; } //No nested elements
@@ -6,77 +8,26 @@ function steamrollArray(arr) {
 
     //IIFE
     (function flatarr(zarr) {
-
-        //Check if zarr is already a number or object
-        if (typeof(zarr) === 'number' || !zarr.length) {
+        
+        //Check if zarr is already a number, string, or object and collect it
+        if (typeof(zarr) === 'number' || typeof(zarr) === 'string' || !zarr.length) {
             newarr.push(zarr);
+        }
 
-        } 
+        //Iterate through zarr and flatten each element recuresively
+        else {
+            zarr.filter(elem => elem.length != 0 )
+                .forEach((elem) => {
 
-        //zarr is of type Array
-        else { 
-            zarr.forEach((elem, index, tarr) => {
-                let test = elem;
-                //console.log('NEW LOOP');
-                //console.log("test before = ", test);
-
-                //elem is a nested number
-                if (Array.isArray(test) && test.length == 1) { 
-                    //console.log('calling flatarr() on ', test[0]);
-                    flatarr(test[0]);
-
-                } 
-                //elem is a multi-element array of unknown contents. flatten each element.
-                else { 
-                    test = flatarr(test);
-                }
-
-            });
+                    //Is elem a nested number or another array?
+                    let test = elem;
+                    Array.isArray(test) && test.length == 1 ? flatarr(test[0]) : test = flatarr(test);
+                });
         }
     })(arr);
 
     return newarr;
 }
 
-//steamrollArray([1, [2],[3, [[4]]]]);
-let result = steamrollArray([
-    [
-        [
-            [1]
-        ]
-    ],
-    [
-        [2],
-        [
-            [3]
-        ], 1
-    ], 4, {}
-]);
+let result = steamrollArray([1, ['a'], [3, [[4]]], [{}]]);
 console.log(result);
-
-
-
-
-// //Check if arr is actually a number or object
-// if (typeof(arr) === 'number' || !arr.length) {
-//     newarr.push(arr);
-
-// } else { //arr is of type Array
-
-//     //if (arr.some(x => isarr(x)) === false) { return arr; } //No nested elements
-
-//     arr.forEach(elem => {
-//         let test = elem;
-//         console.log('NEW LOOP');
-//         console.log("test before = ", test);
-
-//         if (isarr(test) && test.length == 1) { //Nested number
-//             console.log('calling steamrollArray() on ', test);
-//             steamrollArray(test[0]);
-
-//         } else { //multi-element array of unknown contents. check flatten each element
-//             steamrollArray(test);
-//         }
-
-//     });
-// }

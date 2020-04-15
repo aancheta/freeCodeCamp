@@ -1,7 +1,4 @@
 function convertToRoman(num) {
-    
-    //Determine the roman numeral representation for each of these and combine them to get the result
-
 
     //Input validation
     if (num < 1 || num >= 4000) {
@@ -9,99 +6,66 @@ function convertToRoman(num) {
         return undefined;
     }
 
-    let digits = num.toString().length;
-    let newnum, arr = [];
-
     //Break num up into thousands, hundreds, tens, and ones
-    if (digits == 1) { 
-    	arr = [num]; 
-    } 
-    else {
-        for (let i = digits; i > 0; i--) {
-            if (i == digits && digits > 1) {
-                newnum = num;
-                //console.log(newnum, result);
-            } 
-            else {
-                newnum %= Math.pow(10, i);
-                //console.log(newnum,result);
-            }
-            if (newnum > 0) { arr.push(newnum - (newnum % Math.pow(10, i - 1))); }
-        }
-        
+    let arr = Array.from(num.toString()), y = arr.length - 1;
+    arr = arr.map( (x,j) => parseInt(x) * Math.pow(10,y-j) )
+    		 .filter( x => x > 0);		//Skip digits == 0
 
-        }
-
-        arr = arr.filter(x => x > 0);
-        
-    
-
-    console.log(arr); //[ones, tens, hundreds, thousands]
-
+    //Determine the roman numeral representation for each element in arr
     let objarr = [
-        { sym: 'I', range: [1, 4] }, // 4 = IV
-        { sym: 'V', range: [5, 9] }, // 9 = IX
-        { sym: 'X', range: [10, 40] }, // 40 = XL
-        { sym: 'L', range: [50, 90] }, // 90 = XC
-        { sym: 'C', range: [100, 400] }, // 400 = CD
-        { sym: 'D', range: [500, 900] }, // 900 = CM
+        { sym: 'I', range: [1, 4] }, 		// 4 = IV
+        { sym: 'V', range: [5, 9] }, 		// 9 = IX
+        { sym: 'X', range: [10, 40] }, 		// 40 = XL
+        { sym: 'L', range: [50, 90] }, 		// 90 = XC
+        { sym: 'C', range: [100, 400] }, 	// 400 = CD
+        { sym: 'D', range: [500, 900] }, 	// 900 = CM
         { sym: 'M', range: [1000, 3999] }
     ];
 
-    //let len = objarr.length;
+    //Notice the geometric sequences in the ranges above
+    //I'll call them: 	seq10 = {1,10,100,1000,...} --> 0 and even indices
+    //					seq5  = {5,50,500,...} --> odd indices
+    //We need this information later to determine the order in which 
+    //roman numerals will be generated
 
-    //notice the geometric sequences above
-    //I'll call them seq10 = 1,10,100,1000 --> 0 and even i
-    //and seq5 = 5,50,500 --> odd i
-    //can ID sequences using even/odd indices or 
-    //another test: log_10(range[0]) == Math.Int() ? if yes then it is in seq10
+    //Comment: A more mathematical approach to identifying which sequence the
+    //range falls into is the following test: Number.isInteger(log_10(range[0]))
+    //If true then the object is of type "seq10"
 
 
-    //Convert to roman numerals
-    
-
-	    //Is n at the end of the range (i.e. n == range[1])?
-	    //Yes: (case - subtraction)
-		    //Is range[0] of the current object in seq5?
-		    //yes (V,L,D): sym before + sym after
-		    //no (I,X,C,M): current symbol + next symbol 
-	    //No: continue
-
-	    //Is range[0] of the current obj in seq5?
-		    //Yes: (addition) current sym + previous sym
-		    //No: Repeat the current symbol up to three times
+    //Convert array to roman numeral symbols
     let symarr = arr.map((n, ni) => {
-    //let chars = '';
 
-    //Find the range in the obj arr (roman) that n falls in 
-    let oi = objarr.findIndex(obj => n >= obj.range[0] && n <= obj.range[1]);
-    let obj = objarr[oi];
+        //Find the object with the range that n falls into
+        let oi = objarr.findIndex(obj => n >= obj.range[0] && n <= obj.range[1]);
+        let obj = objarr[oi];
 
-
-    //Is n at the end of the range (i.e. n == range[1])?
-    if (n === obj.range[1]) { //Yes: (case - subtraction)
-        //console.log('in here');
-        return oi % 2 !== 0 ? getSymBefore(oi) + getSymAfter(oi) //current obj is in seq5
-            : obj.sym + getSymAfter(oi) //obj is in seq10
-    } 
-    else {
-        //console.log('in there', oi, ni, n, obj.sym, n, obj.range[0]);
-        let count;
-        if (oi % 2 !== 0) {
-            count = (n - obj.range[0]) / objarr[oi - 1].range[0]
-            return obj.sym + getSymBefore(oi).repeat(count) //current obj is in seq5
-        } 
-        else {
-            count = n / obj.range[0]
-            return obj.sym.repeat(count);
+        //Is n at the end of the range?
+        if (n === obj.range[1]) {			//Current obj is of type "seq5"
+            return oi % 2 !== 0 ? getSymBefore(oi) + getSymAfter(oi) 
+                :
+                obj.sym + getSymAfter(oi) 	//type "seq10"
         }
-    }
+        //Otherwise continue
+        else {
+            let count;
+            if (oi % 2 !== 0) { 			//seq5
+                count = (n - obj.range[0]) / objarr[oi - 1].range[0]
+                return obj.sym + getSymBefore(oi).repeat(count)
+            } else { 						//seq10
+                count = n / obj.range[0]
+                return obj.sym.repeat(count);
+            }
+        }
 
-});
+    });	//end symarr mapping
 
-
-    //Concatenate the symbols in the array
+    //Finally concatenate and return the symbols in the array
     return symarr.join('');
+
+    //********************
+    //FUNCTION DEFINITIONS
+    //********************
 
     function getSymBefore(index) {    	
         return objarr[index - 1].sym;

@@ -3,24 +3,18 @@ function rot13(str) {
     // Assume input is uppercase and includes special characters
     // 26 = 2*13 = # letters in the alphabet
     // ASCII -> A = 65, Z = 90
-    //          at the midpoint M = 77 , N = 78 
+    //          at the midpoint M = 77 , N = 78 = 2*26
 
-    let decoded = '', codept;   //The new, decoded string
+    // A % 26 = 13 --> 65 + 13 = 78 = N
+    // N % 26 = 0  --> 65 + 0  = 65 = A
+    // Z % 26 = 12 --> 65 + 12 = 77 = M
 
-    for (let i=0; i<str.length; i++) {
-        
-       if (/\W/.test(str[i]) ) { //Add non-word character. No change. Add to new string.
-        decoded += str[i];  
-       } else {
-        codept = str.charCodeAt(i);             //Initialize with current codepoint
-        codept += (codept > 77) ? -13 : 13      //Subtract if char is > M, otherwise add
-        decoded += String.fromCharCode(codept); //Turn the new code point into a char
-        
-       }
-      
-    }
-  
-    return decoded;
+    //Can use replace() here because strings are immutable. replace() returns 
+    //a new string and takes a value or regex as the first argument
+    return str.replace(/[A-Z]/g, (char) => {
+      return String.fromCharCode(char.charCodeAt(0) % 26 + 65); 
+    });
+
   }
   
   console.log(rot13("SERR PBQR PNZC"));

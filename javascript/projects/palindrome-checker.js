@@ -37,5 +37,5 @@ function palindrome(str) {
     return true;
 }
 
-console.log(palindrome("taco\|ca t_"));
+console.log(palindrome("taco%|ca t_"));
 console.log(palindrome("A man, a plan, a canal. Panama"));

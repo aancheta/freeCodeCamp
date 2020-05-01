@@ -21,6 +21,7 @@ function checkCashRegister(price, cash, cid) {
   //A loop here is more efficient that using .reverse().findIndex() because it doesn't create memory for a new array
   // let ind = units.reverse().findIndex( unit => { if (change >= unit) { return true; } } );
   // ind = (units.length - 1) - ind; //Need to re-index here because of reverse search
+  let ind;
   for (let j = cid.length - 1; j >= 0; j--) {
     if (change >= units[j]) {
       ind = j;

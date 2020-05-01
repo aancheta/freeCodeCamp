@@ -74,7 +74,7 @@ function checkCashRegister(price, cash, cid) {
     else {
       rem = change.toFixed(2) % units[ind]; //Remainder still owed. Round here to avoid precision errors with cents.
       let withdrawn = change - rem; //Amount withdrawn from drawer
-      withdrawn = (withdrawn < 1) ? withdrawn.toFixed(2) : Math.round(withdrawn); //Formatting
+      withdrawn = Number( (withdrawn < 1) ? withdrawn.toFixed(2) : Math.round(withdrawn) ); //Formatting
 
       if (withdrawn >= minDen) { 
         changeArr.push([cid[ind][0], withdrawn]) 
